@@ -1,83 +1,113 @@
 package flixel.input;
 
+import flixel.input.FlxInput.FlxInputState;
+
 class FlxInput<T> implements IFlxInput
 {
 	public var ID:T;
-
-	public var justReleased(get, never):Bool;
-	public var released(get, never):Bool;
-	public var pressed(get, never):Bool;
-	public var justPressed(get, never):Bool;
-
-	public var current:FlxInputState = RELEASED;
-	public var last:FlxInputState = RELEASED;
-
+	
+	public var pressed(get, null):Bool;
+	public var released(get, null):Bool;
+	public var justPressed(get, null):Bool;
+	public var justReleased(get, null):Bool;
+	
+	private var justPressedQueueFalse:Bool;
+	private var justReleasedQueueFalse:Bool;
+	
 	public function new(ID:T)
 	{
 		this.ID = ID;
+		reset();
 	}
-
+	
 	public function press():Void
 	{
-		last = current;
-		current = pressed ? PRESSED : JUST_PRESSED;
+		if (released) 
+		{
+			justPressed = true;
+			justPressedQueueFalse = false;
+		}
+		
+		pressed = true;
+		released = false;
 	}
-
+	
 	public function release():Void
-	{
-		last = current;
-		current = pressed ? JUST_RELEASED : RELEASED;
+	{		
+		if (pressed)
+		{
+			justReleased = true;
+			justReleasedQueueFalse = false;
+		}
+		
+		released = true;
+		pressed = false;
 	}
-
+	
 	public function update():Void
-	{
-		if (last == JUST_RELEASED && current == JUST_RELEASED)
+	{		
+		if (justPressedQueueFalse)
 		{
-			current = RELEASED;
+			justPressed = false;
+			justPressedQueueFalse = false;
 		}
-		else if (last == JUST_PRESSED && current == JUST_PRESSED)
+		
+		if (justReleasedQueueFalse)
 		{
-			current = PRESSED;
+			justReleased = false;
+			justReleasedQueueFalse = false;
 		}
-
-		last = current;
+		
+		if (justPressed) 
+		{
+			justPressedQueueFalse = true;
+		}
+		
+		if (justReleased)
+		{
+			justReleasedQueueFalse = true;
+		}
 	}
-
+	
 	public function reset():Void
 	{
-		current = RELEASED;
-		last = RELEASED;
+		pressed = false;
+		released = true;
+		justPressed = false;
+		justReleased = false;
+		justPressedQueueFalse = false;
+		justReleasedQueueFalse = false;
 	}
-
+	
 	public function hasState(state:FlxInputState):Bool
 	{
 		return switch (state)
 		{
 			case JUST_RELEASED: justReleased;
-			case RELEASED: released;
-			case PRESSED: pressed;
-			case JUST_PRESSED: justPressed;
+			case RELEASED:      released;
+			case PRESSED:       pressed;
+			case JUST_PRESSED:  justPressed;
 		}
 	}
-
-	inline function get_justReleased():Bool
+	
+	private function get_released():Bool
 	{
-		return current == JUST_RELEASED;
+		return released;
 	}
-
-	inline function get_released():Bool
+	
+	private function get_justReleased():Bool
 	{
-		return current == RELEASED || justReleased;
+		return justReleased;
 	}
-
-	inline function get_pressed():Bool
+	
+	private function get_justPressed():Bool 
 	{
-		return current == PRESSED || justPressed;
+		return justPressed;
 	}
-
-	inline function get_justPressed():Bool
+	
+	private function get_pressed():Bool 
 	{
-		return current == JUST_PRESSED;
+		return pressed;
 	}
 }
 
@@ -85,7 +115,7 @@ class FlxInput<T> implements IFlxInput
 abstract FlxInputState(Int) from Int
 {
 	var JUST_RELEASED = -1;
-	var RELEASED = 0;
-	var PRESSED = 1;
-	var JUST_PRESSED = 2;
+	var RELEASED      =  0;
+	var PRESSED       =  1;
+	var JUST_PRESSED  =  2;
 }

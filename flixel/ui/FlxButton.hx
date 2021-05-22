@@ -204,6 +204,13 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 
 	var lastStatus = -1;
 
+	#if !FLX_NO_MOUSE
+	/**
+	 * Hideous hack for queuing mouse release events
+	 */
+	private var queuedUpHandlerChecks = 0;
+	#end
+
 	/**
 	 * Creates a new `FlxTypedButton` object with a gray background.
 	 *
@@ -476,6 +483,18 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 				onOverHandler();
 			}
 		}
+
+		#if !FLX_NO_MOUSE
+		if (queuedUpHandlerChecks > 0)
+		{
+			queuedUpHandlerChecks = 0;
+			
+			if (status == FlxButton.PRESSED)
+			{
+				onUpHandler();
+			}
+		}
+		#end
 	}
 
 	function updateLabelPosition()
@@ -504,7 +523,7 @@ class FlxTypedButton<T:FlxSprite> extends FlxSprite implements IFlxInput
 	{
 		if (visible && exists && active && status == FlxButton.PRESSED)
 		{
-			onUpHandler();
+			queuedUpHandlerChecks++;
 		}
 	}
 	#end

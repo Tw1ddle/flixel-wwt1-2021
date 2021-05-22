@@ -141,6 +141,7 @@ class FlxKeyboard extends FlxKeyManager<FlxKey, FlxKeyList>
 	{
 		var data:Array<CodeValuePair> = null;
 
+		/*
 		for (key in _keyListArray)
 		{
 			if (key == null || key.released)
@@ -155,6 +156,7 @@ class FlxKeyboard extends FlxKeyManager<FlxKey, FlxKeyList>
 
 			data.push(new CodeValuePair(key.ID, key.current));
 		}
+		*/
 
 		return data;
 	}
@@ -171,12 +173,14 @@ class FlxKeyboard extends FlxKeyManager<FlxKey, FlxKeyList>
 		var i:Int = 0;
 		var l:Int = Record.length;
 
+		/*
 		while (i < l)
 		{
 			var o = Record[i++];
 			var o2 = getKey(o.code);
 			o2.current = o.value;
 		}
+		*/
 	}
 }
 

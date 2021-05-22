@@ -661,6 +661,7 @@ class FlxMouse extends FlxPointer implements IFlxInputManager
 	@:allow(flixel.system.replay.FlxReplay)
 	function record():MouseRecord
 	{
+		/*
 		if ((_lastX == _globalScreenX)
 			&& (_lastY == _globalScreenY)
 			&& (_lastLeftButtonState == _leftButton.current)
@@ -674,11 +675,14 @@ class FlxMouse extends FlxPointer implements IFlxInputManager
 		_lastLeftButtonState = _leftButton.current;
 		_lastWheel = wheel;
 		return new MouseRecord(_lastX, _lastY, _leftButton.current, _lastWheel);
+		*/
+		return null;
 	}
 
 	@:allow(flixel.system.replay.FlxReplay)
 	function playback(record:MouseRecord):Void
 	{
+		/*
 		// Manually dispatch a MOUSE_UP event so that, e.g., FlxButtons click correctly on playback.
 		// Note: some clicks are fast enough to not pass through a frame where they are PRESSED
 		// and JUST_RELEASED is swallowed by FlxButton and others, but not third-party code
@@ -692,6 +696,7 @@ class FlxMouse extends FlxPointer implements IFlxInputManager
 		_globalScreenX = record.x;
 		_globalScreenY = record.y;
 		updatePositions();
+		*/
 	}
 }
 #end
